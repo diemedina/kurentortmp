@@ -358,7 +358,7 @@ function bindFFmpeg(streamip, streamport, sdpData, ws, platform) {
             rtmp = 'rtmp://a.rtmp.youtube.com/live2/3qbr-x2xv-8td0-m21a-50sg'
             break;
         case TWITCH:
-            rtmp = 'rtmp://live.twitch.tv/app/live_712662228_Agw6qRFRb67tWYdjffhkmmI2xfuos7';
+            rtmp = 'rtmp://live.twitch.tv/app/live_712662228_wuTQSkwg8ViE7gS74Ic9w5rhJY7zvW';
             break;
     }
 
