@@ -50,6 +50,10 @@ window.onload = function () {
 		});
 		codecPreferences.disabled = false;
 	}
+
+	webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, function (error) {
+		if (error) return onError(error);
+	});
 }
 
 window.onbeforeunload = function () {
@@ -142,12 +146,8 @@ function start() {
 			}
     	}
 	}
-
-	webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, function (error) {
-		if (error) return onError(error);
-		this.generateOffer(onOffer);
-	});
-
+	
+	webRtcPeer.generateOffer(onOffer);
 	setCodec();
 }
 
