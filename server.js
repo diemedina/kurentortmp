@@ -285,16 +285,15 @@ function createMediaElements(pipeline, ws, callback) {
 }
 
 //v=0
-//o=- 0 0 IN IP4 127.0.0.1
-//s=Stream
-//c=IN IP4 127.0.0.1
+//o=- 0 0 IN IP4 192.168.1.6
+//s=Qq8FY5sPB4HFS1X
+//c=IN IP4 192.168.1.6
 //t=0 0
-//m=video 9 RTP/AVP 103
-//a=rtpmap:103 H264/90000
-//a=fmtp:103 packetization-mode=1
-//a=sendonly
-//a=direction:active
-//a=ssrc:112233 cname:user@example.com
+//m=video 45414 RTP/AVP 100
+//a=rtpmap:100 H264/90000
+//a=recvonlym=audio 45415 RTP/AVP 96
+//a=rtpmap:96 OPUS/48000/2
+//a=recvonly
 
 
 function generateSdpStreamConfig(nodeStreamIp, port, audioport, callback) {
@@ -309,13 +308,12 @@ function generateSdpStreamConfig(nodeStreamIp, port, audioport, callback) {
     sdpRtpOfferString += 's=KMS\n';
     sdpRtpOfferString += 'c=IN IP4 ' + nodeStreamIp + '\n';
     sdpRtpOfferString += 't=0 0\n';
-    sdpRtpOfferString += 'm=audio ' + audioport + ' RTP/AVP 97\n';
-    sdpRtpOfferString += 'a=recvonly\n';
-    sdpRtpOfferString += 'a=rtpmap:97 PCMU/8000\n';
-    sdpRtpOfferString += 'a=fmtp:97 profile-level-id=1;mode=AAC-hbr;sizelength=13;indexlength=3;indexdeltalength=3;config=1508\n';
-    sdpRtpOfferString += 'm=video ' + port + ' RTP/AVP 103\n';
-    sdpRtpOfferString += 'a=rtpmap:103 H264/90000\n';
-    sdpRtpOfferString += 'a=fmtp:103 packetization-mode=1\n';
+    //sdpRtpOfferString += 'm=audio ' + audioport + ' RTP/AVP 97\n';
+    //sdpRtpOfferString += 'a=recvonly\n';
+    //sdpRtpOfferString += 'a=rtpmap:97 PCMU/8000\n';
+    //sdpRtpOfferString += 'a=fmtp:97 profile-level-id=1;mode=AAC-hbr;sizelength=13;indexlength=3;indexdeltalength=3;config=1508\n';
+    sdpRtpOfferString += 'm=video ' + port + ' RTP/AVP 100\n';
+    sdpRtpOfferString += 'a=rtpmap:100 H264/90000\n';
     return callback(null, sdpRtpOfferString);
 }
 
