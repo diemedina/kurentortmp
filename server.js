@@ -242,7 +242,7 @@ function start(sessionId, ws, sdpOffer, callback) {
                                 console.log('start process on: rtp://' + streamIp + ':' + streamPort);
                                 console.log('recv sdp answer:', sdpAnswer);
                                 var _ffmpeg_child = bindFFmpeg(streamIp, streamPort, sdpRtpOfferString, ws, TWITCH);
-                                var _ffmpeg_child_2 = bindFFmpeg(streamIp, streamPort, sdpRtpOfferString, ws, TWITCH_2);
+                                var _ffmpeg_child_2 = bindFFmpeg(streamIp, streamPort + (session_index * 2), sdpRtpOfferString, ws, TWITCH_2);
                                 sessions[sessionId] = {
                                     'pipeline': pipeline,
                                     'webRtcEndpoint': webRtcEndpoint,
