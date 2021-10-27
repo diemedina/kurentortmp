@@ -51,6 +51,17 @@ window.onload = function () {
 		codecPreferences.disabled = false;
 	}
 
+	var options = {
+		localVideo: videoInput,
+		onicecandidate: onIceCandidate,
+		mediaConstraints: {
+			audio: true,
+			video: {
+				width: 720,
+				framerate: 30
+			}
+    	}
+	}
 	webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, function (error) {
 		if (error) return onError(error);
 	});
@@ -135,18 +146,7 @@ function start() {
 
 	console.log('Creating WebRtcPeer and generating local sdp offer ...');
 
-	var options = {
-		localVideo: videoInput,
-		onicecandidate: onIceCandidate,
-		mediaConstraints: {
-			audio: true,
-			video: {
-				width: 720,
-				framerate: 30
-			}
-    	}
-	}
-	
+
 	webRtcPeer.generateOffer(onOffer);
 	setCodec();
 }
