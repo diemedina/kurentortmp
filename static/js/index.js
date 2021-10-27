@@ -98,7 +98,7 @@ function setCodec() {
 		codecs.splice(selectedCodecIndex, 1);
 		codecs.unshift(selectedCodec);
 		console.log(codecs);
-		const transceiver = webRtcPeer.getTransceivers().find(t => t.sender && t.sender.track === localStream.getVideoTracks()[0]);
+		const transceiver = webRtcPeer.peerConnection.getTransceivers().find(t => t.sender && t.sender.track === localStream.getVideoTracks()[0]);
 		transceiver.setCodecPreferences(codecs);
 		console.log('Preferred video codec', selectedCodec);
 		console.log('Transceiver', transceiver);
@@ -107,7 +107,7 @@ function setCodec() {
 	codecPreferences.disabled = true;
 	// Display the video codec that is actually used.
 	setTimeout(async () => {
-	  const stats = await webRtcPeer.getStats();
+	  const stats = await webRtcPeer.peerConnection.getStats();
 	  stats.forEach(stat => {
 		if (!(stat.type === 'outbound-rtp' && stat.kind === 'video')) {
 		  return;
