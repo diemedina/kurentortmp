@@ -151,7 +151,7 @@ wss.on('connection', function (ws, request) {
                 onIceCandidate(sessionId, message.candidate);
                 break;
 
-            case 'switch':
+            case 'switchPlatform':
                 platform = TWITCH_2;
                 break;
 
