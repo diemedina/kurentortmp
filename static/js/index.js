@@ -57,10 +57,6 @@ ws.onmessage = function (message) {
 		case 'ffmpeg':
 			console.log('From ffmpeg:', parsedMessage.message);
 			break;
-		case "rtmp":
-			console.log('Recv rtmp request:', parsedMessage.message);
-			playrtmp('rtmp://' + location.hostname + parsedMessage.message);
-			break;
 		default:
 			if (state == I_AM_STARTING) {
 				setState(I_CAN_START);
@@ -91,39 +87,12 @@ function start() {
     	}
 	}
 
-	webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options, function (error) {
+	webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, function (error) {
 		if (error) return onError(error);
 		this.generateOffer(onOffer);
 	});
 }
-function playrtmp(rtmpaddress) {
-	var parameters = {
-		src: rtmpaddress,
-		autoPlay: "true",
-		controlBarAutoHide: "true",
-		poster: "img/adobe.jpg",
-		javascriptCallbackFunction: "jsbridge"
-	};
-	console.log(parameters);
-	// Embed the player SWF:
-	swfobject.embedSWF(
-		"GrindPlayer.swf"
-		, "VideoElement"
-		, 480
-		, 360
-		, "10.2"
-		, "expressInstall.swf"
-		, parameters
-		,
-		{
-			allowFullScreen: "true",
-			wmode: "transparent"
-		}
-		, {
-			name: "GrindPlayer"
-		}
-	);
-}
+
 function onIceCandidate(candidate) {
 	console.log('Local candidate' + JSON.stringify(candidate));
 
