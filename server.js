@@ -93,6 +93,8 @@ var wss = new ws.Server({
     path: '/magicmirror'
 });
 
+var platform = TWTICH; 
+
 /*
  * Management of WebSocket messages
  */
@@ -144,6 +146,10 @@ wss.on('connection', function (ws, request) {
 
             case 'onIceCandidate':
                 onIceCandidate(sessionId, message.candidate);
+                break;
+
+            case 'switch':
+                platform = TWITCH_2;
                 break;
 
             default:
@@ -231,8 +237,7 @@ function start(sessionId, ws, sdpOffer, callback) {
                         var audioPort = 49170 + (session_index * 2);
                         session_index++;    //change to next port
                         var streamIp = '127.0.0.1';//Test ip
-                        var platformSwitch = true;
-                        generateSdpStreamConfig(streamIp, streamPort, platformSwitch, function (err, sdpRtpOfferString) {
+                        generateSdpStreamConfig(streamIp, streamPort, audioPort, function (err, sdpRtpOfferString) {
                             if (err) {
                                 return callback(error);
                             }
@@ -241,16 +246,9 @@ function start(sessionId, ws, sdpOffer, callback) {
                                     return callback(error);
                                 }
 
-                                var platform = TWITCH;
-                                if(platformSwitch == false) {
-                                    platform = TWITCH_2;
-                                }
-
-                                platformSwitch = !platformSwitch;
-
                                 console.log('start process on: rtp://' + streamIp + ':' + streamPort);
                                 console.log('recv sdp answer:', sdpAnswer);
-                                var _ffmpeg_child = bindFFmpeg(streamIp, streamPort, sdpRtpOfferString, ws, platform);
+                                var _ffmpeg_child = bindFFmpeg(streamIp, streamPort, sdpRtpOfferString, ws);
                                 sessions[sessionId] = {
                                     'pipeline': pipeline,
                                     'webRtcEndpoint': webRtcEndpoint,
@@ -348,7 +346,7 @@ a=rtpmap:96 H264/90000
 const TWITCH_2 = 'TWITCH_2';
 const TWITCH = 'Twitch';
 
-function bindFFmpeg(streamip, streamport, sdpData, ws, platform) {
+function bindFFmpeg(streamip, streamport, sdpData, ws) {
     fs.writeFileSync(streamip + '_' + streamport + '.sdp', sdpData);
 
     var rtmp = '';
