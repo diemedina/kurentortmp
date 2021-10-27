@@ -284,6 +284,19 @@ function createMediaElements(pipeline, ws, callback) {
     });
 }
 
+//v=0
+//o=- 0 0 IN IP4 127.0.0.1
+//s=Stream
+//c=IN IP4 127.0.0.1
+//t=0 0
+//m=video 9 RTP/AVP 103
+//a=rtpmap:103 H264/90000
+//a=fmtp:103 packetization-mode=1
+//a=sendonly
+//a=direction:active
+//a=ssrc:112233 cname:user@example.com
+
+
 function generateSdpStreamConfig(nodeStreamIp, port, audioport, callback) {
     if (typeof nodeStreamIp === 'undefined'
         || nodeStreamIp === null
@@ -300,9 +313,9 @@ function generateSdpStreamConfig(nodeStreamIp, port, audioport, callback) {
     sdpRtpOfferString += 'a=recvonly\n';
     sdpRtpOfferString += 'a=rtpmap:97 PCMU/8000\n';
     sdpRtpOfferString += 'a=fmtp:97 profile-level-id=1;mode=AAC-hbr;sizelength=13;indexlength=3;indexdeltalength=3;config=1508\n';
-    sdpRtpOfferString += 'm=video ' + port + ' RTP/AVP 96\n';
-    sdpRtpOfferString += 'a=rtpmap:96 H264/90000\n';
-    sdpRtpOfferString += 'a=fmtp:96 packetization-mode=1\n';
+    sdpRtpOfferString += 'm=video ' + port + ' RTP/AVP 103\n';
+    sdpRtpOfferString += 'a=rtpmap:103 H264/90000\n';
+    sdpRtpOfferString += 'a=fmtp:103 packetization-mode=1\n';
     return callback(null, sdpRtpOfferString);
 }
 
@@ -311,16 +324,6 @@ function connectMediaElements(webRtcEndpoint, rtpEndpoint, callback) {
         if (error) {
             return callback(error);
         }
-        //it will cause loop back
-        //see https://groups.google.com/forum/?hl=IT#!searchin/kurento/rtpendpoint/kurento/CiN79QObJWQ/YS-uGhP7t9AJ
-        /*
-        rtpEndpoint.connect(webRtcEndpoint, function (error) {
-            if (error) {
-                return callback(error);
-            }
-            return callback(null);
-        });
-        */
         return callback(null);
     });
 }
