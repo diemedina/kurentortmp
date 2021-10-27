@@ -58,18 +58,14 @@
         <video id="videoInput" autoplay width="480px" height="360px" poster="img/webrtc.png"></video>
       </div>
       <div class="col-md-6" id="videocontainer">
-        <h3>RTMP Stream</h3>
-        <div id="VideoElement">
-            <script>
-              playrtmp()
-            </script>
-        </div>
       </div>
       <div class="col-md-10">
         <a id="start" href="#" class="btn btn-success">
           <span class="glyphicon glyphicon-play"></span> Start</a>
         <a id="stop" href="#" class="btn btn-danger">
           <span class="glyphicon glyphicon-stop"></span> Stop</a>
+        <a id="switch" href="#" class="btn btn-success">
+          <span class="glyphicon glyphicon-play"></span> Switch Platform</a>
       </div>
     </div>
     <div class="row">
@@ -80,6 +76,17 @@
         </div>
       </div>
     </div>
+        
+    <div class="box">
+      <span>Codec preferences:</span>
+      <select id="codecPreferences">
+        <option selected value="">Default</option>
+      </select>
+      <div id="actualCodec"></div>
+    </div>
+    <button onclick="window.setCodec()"> SetCodec </button>
+    <br />
+
   </div>
 
   <footer>
