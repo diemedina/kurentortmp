@@ -16,6 +16,9 @@
  */
 const NodeMediaServer = require('node-media-server').NodeMediaServer;
 
+const TWITCH_2 = 'TWITCH_2';
+const TWITCH = 'Twitch';
+
 var path = require('path');
 var url = require('url');
 var cookieParser = require('cookie-parser')
@@ -343,8 +346,6 @@ a=rtpmap:96 H264/90000
 
 //ffmpeg -protocol_whitelist file,udp,rtp -i rtp-forwarder.sdp -c copy -preset veryfast -b:v 3000k -maxrate 3000k -bufsize 6000k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 -f flv rtmp://live.twitch.tv/app/live_712662228_Agw6qRFRb67tWYdjffhkmmI2xfuos7
 
-const TWITCH_2 = 'TWITCH_2';
-const TWITCH = 'Twitch';
 
 function bindFFmpeg(streamip, streamport, sdpData, ws) {
     fs.writeFileSync(streamip + '_' + streamport + '.sdp', sdpData);
