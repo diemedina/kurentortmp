@@ -228,10 +228,12 @@ function start(sessionId, ws, sdpOffer, callback) {
                         }
                         console.log('my session id:', sessionId);
                         var streamPort = 55000 + (session_index * 2);
-                        var audioPort = 49170 + (session_index * 2);
+                        //var audioPort = 49170 + (session_index * 2);
+                        session_index++;    //change to next port
+                        var streamPort_2 = 55000 + (session_index * 2);
                         session_index++;    //change to next port
                         var streamIp = '127.0.0.1';//Test ip
-                        generateSdpStreamConfig(streamIp, streamPort, audioPort, function (err, sdpRtpOfferString) {
+                        generateSdpStreamConfig(streamIp, streamPort, streamPort_2, function (err, sdpRtpOfferString) {
                             if (err) {
                                 return callback(error);
                             }
@@ -242,7 +244,7 @@ function start(sessionId, ws, sdpOffer, callback) {
                                 console.log('start process on: rtp://' + streamIp + ':' + streamPort);
                                 console.log('recv sdp answer:', sdpAnswer);
                                 var _ffmpeg_child = bindFFmpeg(streamIp, streamPort, sdpRtpOfferString, ws, TWITCH);
-                                var _ffmpeg_child_2 = bindFFmpeg(streamIp, streamPort + (session_index * 2), sdpRtpOfferString, ws, TWITCH_2);
+                                var _ffmpeg_child_2 = bindFFmpeg(streamIp, streamPort_2, sdpRtpOfferString, ws, TWITCH_2);
                                 sessions[sessionId] = {
                                     'pipeline': pipeline,
                                     'webRtcEndpoint': webRtcEndpoint,
@@ -286,18 +288,6 @@ function createMediaElements(pipeline, ws, callback) {
     });
 }
 
-//v=0
-//o=- 0 0 IN IP4 192.168.1.6
-//s=Qq8FY5sPB4HFS1X
-//c=IN IP4 192.168.1.6
-//t=0 0
-//m=video 45414 RTP/AVP 100
-//a=rtpmap:100 H264/90000
-//a=recvonlym=audio 45415 RTP/AVP 96
-//a=rtpmap:96 OPUS/48000/2
-//a=recvonly
-
-
 function generateSdpStreamConfig(nodeStreamIp, port, audioport, callback) {
     if (typeof nodeStreamIp === 'undefined'
         || nodeStreamIp === null
@@ -310,12 +300,13 @@ function generateSdpStreamConfig(nodeStreamIp, port, audioport, callback) {
     sdpRtpOfferString += 's=KMS\n';
     sdpRtpOfferString += 'c=IN IP4 ' + nodeStreamIp + '\n';
     sdpRtpOfferString += 't=0 0\n';
-    //sdpRtpOfferString += 'm=audio ' + audioport + ' RTP/AVP 97\n';
-    //sdpRtpOfferString += 'a=recvonly\n';
-    //sdpRtpOfferString += 'a=rtpmap:97 PCMU/8000\n';
-    //sdpRtpOfferString += 'a=fmtp:97 profile-level-id=1;mode=AAC-hbr;sizelength=13;indexlength=3;indexdeltalength=3;config=1508\n';
-    sdpRtpOfferString += 'm=video ' + port + ' RTP/AVP 100\n';
-    sdpRtpOfferString += 'a=rtpmap:100 H264/90000\n';
+    sdpRtpOfferString += 'm=audio ' + audioport + ' RTP/AVP 97\n';
+    sdpRtpOfferString += 'a=recvonly\n';
+    sdpRtpOfferString += 'a=rtpmap:97 PCMU/8000\n';
+    sdpRtpOfferString += 'a=fmtp:97 profile-level-id=1;mode=AAC-hbr;sizelength=13;indexlength=3;indexdeltalength=3;config=1508\n';
+    sdpRtpOfferString += 'm=video ' + port + ' RTP/AVP 96\n';
+    sdpRtpOfferString += 'a=rtpmap:96 H264/90000\n';
+    sdpRtpOfferString += 'a=fmtp:96 packetization-mode=1\n';
     return callback(null, sdpRtpOfferString);
 }
 
@@ -349,8 +340,8 @@ a=rtpmap:96 H264/90000
 
 //ffmpeg -protocol_whitelist file,udp,rtp -i rtp-forwarder.sdp -c copy -preset veryfast -b:v 3000k -maxrate 3000k -bufsize 6000k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 -f flv rtmp://live.twitch.tv/app/live_712662228_Agw6qRFRb67tWYdjffhkmmI2xfuos7
 
-const TWITCH_2 = 'Twitch_2'; //kurentortmp1
-const TWITCH = 'Twitch'; //nachovenezia
+const TWITCH_2 = 'TWITCH_2';
+const TWITCH = 'Twitch';
 
 function bindFFmpeg(streamip, streamport, sdpData, ws, platform) {
     fs.writeFileSync(streamip + '_' + streamport + '.sdp', sdpData);
@@ -358,7 +349,7 @@ function bindFFmpeg(streamip, streamport, sdpData, ws, platform) {
     var rtmp = '';
     switch(platform) {
         case TWITCH_2:
-            rtmp = 'rtmp://live.twitch.tv/app/live_737655058_wuSdDC428fZHIHLCBbIKbDY2j2vEbd'
+            rtmp = 'rtmp://live.twitch.tv/app/live_737655058_wuSdDC428fZHIHLCBbIKbDY2j2vEbd';
             break;
         case TWITCH:
             rtmp = 'rtmp://live.twitch.tv/app/live_712662228_wuTQSkwg8ViE7gS74Ic9w5rhJY7zvW';
@@ -432,7 +423,7 @@ function stop(sessionId) {
         }
         var child_process_2 = sessions[sessionId].ffmpeg_child_process_2;
         if (child_process_2) {
-            console.info('Killing child process');
+            console.info('Killing child process_2');
             child_process_2.kill();
             delete child_process_2;
         }
