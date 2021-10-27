@@ -347,16 +347,25 @@ a=rtpmap:96 H264/90000
 
 //ffmpeg -protocol_whitelist file,udp,rtp -i rtp-forwarder.sdp -c copy -preset veryfast -b:v 3000k -maxrate 3000k -bufsize 6000k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 -f flv rtmp://live.twitch.tv/app/live_712662228_Agw6qRFRb67tWYdjffhkmmI2xfuos7
 
-const YOUTUBE = 'YouTube';
-const TWITCH = 'Twitch';
+const TWITCH_2 = 'Twitch_2'; //kurentortmp1
+const TWITCH = 'Twitch'; //nachovenezia
 
 function bindFFmpeg(streamip, streamport, sdpData, ws, platform) {
     fs.writeFileSync(streamip + '_' + streamport + '.sdp', sdpData);
 
+    if(platform == TWITCH)
+    {
+        platform = TWITCH_2
+    }
+    else
+    {
+        platform = TWITCH
+    }
+
     var rtmp = '';
     switch(platform) {
-        case YOUTUBE:
-            rtmp = 'rtmp://a.rtmp.youtube.com/live2/3qbr-x2xv-8td0-m21a-50sg'
+        case TWITCH_2:
+            rtmp = 'rtmp://live.twitch.tv/app/live_737655058_wuSdDC428fZHIHLCBbIKbDY2j2vEbd'
             break;
         case TWITCH:
             rtmp = 'rtmp://live.twitch.tv/app/live_712662228_wuTQSkwg8ViE7gS74Ic9w5rhJY7zvW';
