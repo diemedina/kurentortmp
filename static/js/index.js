@@ -25,7 +25,7 @@ const I_CAN_START = 0;
 const I_CAN_STOP = 1;
 const I_AM_STARTING = 2;
 
-const codecPreferences = document.getElementById('codecPreferences');
+var codecPreferences;
 const supportsSetCodecPreferences = window.RTCRtpTransceiver && 'setCodecPreferences' in window.RTCRtpTransceiver.prototype;
 
 window.onload = function () {
@@ -33,6 +33,7 @@ window.onload = function () {
 	console.log('Page loaded ...');
 	videoInput = document.getElementById('videoInput');
 	videoOutput = document.getElementById('videoOutput');
+	codecPreferences = document.getElementById('codecPreferences');
 	setState(I_CAN_START);
 	
 	if (supportsSetCodecPreferences) {
