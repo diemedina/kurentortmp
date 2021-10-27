@@ -156,7 +156,10 @@ function onIceCandidate(candidate) {
 }
 
 function switchPlatform() {
-	sendMessage("switch")
+	var message = {
+		id: 'switchPlatform'
+	};
+	sendMessage(message)
 }
 
 function onOffer(error, offerSdp) {
