@@ -98,6 +98,7 @@ function setCodec() {
 		codecs.splice(selectedCodecIndex, 1);
 		codecs.unshift(selectedCodec);
 		console.log(codecs);
+		console.log(webRtcPeer)
 		const transceiver = webRtcPeer.peerConnection.getTransceivers().find(t => t.sender && t.sender.track === localStream.getVideoTracks()[0]);
 		transceiver.setCodecPreferences(codecs);
 		console.log('Preferred video codec', selectedCodec);
