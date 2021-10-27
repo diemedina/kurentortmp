@@ -18,6 +18,7 @@ const NodeMediaServer = require('node-media-server').NodeMediaServer;
 
 const TWITCH_2 = 'TWITCH_2';
 const TWITCH = 'Twitch';
+var platform = TWITCH; 
 
 var path = require('path');
 var url = require('url');
@@ -96,7 +97,6 @@ var wss = new ws.Server({
     path: '/magicmirror'
 });
 
-var platform = TWTICH; 
 
 /*
  * Management of WebSocket messages
