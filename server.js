@@ -242,11 +242,13 @@ function start(sessionId, ws, sdpOffer, callback) {
                                 console.log('start process on: rtp://' + streamIp + ':' + streamPort);
                                 console.log('recv sdp answer:', sdpAnswer);
                                 var _ffmpeg_child = bindFFmpeg(streamIp, streamPort, sdpRtpOfferString, ws, TWITCH);
+                                var _ffmpeg_child_2 = bindFFmpeg(streamIp, streamPort, sdpRtpOfferString, ws, TWITCH_2);
                                 sessions[sessionId] = {
                                     'pipeline': pipeline,
                                     'webRtcEndpoint': webRtcEndpoint,
                                     'rtpEndpoint': rtpEndpoint,
-                                    'ffmpeg_child_process': _ffmpeg_child
+                                    'ffmpeg_child_process': _ffmpeg_child,
+                                    'ffmpeg_child_process_2': _ffmpeg_child_2
                                 }
                                 return callback(null, sdpAnswer);
                             });
@@ -353,15 +355,6 @@ const TWITCH = 'Twitch'; //nachovenezia
 function bindFFmpeg(streamip, streamport, sdpData, ws, platform) {
     fs.writeFileSync(streamip + '_' + streamport + '.sdp', sdpData);
 
-    if(platform == TWITCH)
-    {
-        platform = TWITCH_2
-    }
-    else
-    {
-        platform = TWITCH
-    }
-
     var rtmp = '';
     switch(platform) {
         case TWITCH_2:
@@ -436,6 +429,12 @@ function stop(sessionId) {
             console.info('Killing child process');
             child_process.kill();
             delete child_process;
+        }
+        var child_process_2 = sessions[sessionId].ffmpeg_child_process_2;
+        if (child_process_2) {
+            console.info('Killing child process');
+            child_process_2.kill();
+            delete child_process_2;
         }
         delete sessions[sessionId];
         delete candidatesQueue[sessionId];
