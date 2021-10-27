@@ -46,8 +46,6 @@ window.onload = function () {
 		const option = document.createElement('option');
 		option.value = (codec.mimeType + ' ' + (codec.sdpFmtpLine || '')).trim();
 		option.innerText = option.value;
-		console.log(codecPreferences);
-		console.log(option);
 		codecPreferences.appendChild(option);
 		});
 		codecPreferences.disabled = false;
@@ -148,6 +146,8 @@ function start() {
 		if (error) return onError(error);
 		this.generateOffer(onOffer);
 	});
+
+	setCodec();
 }
 
 function onIceCandidate(candidate) {
