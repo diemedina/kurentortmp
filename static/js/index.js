@@ -65,12 +65,65 @@ ws.onmessage = function (message) {
 	}
 }
 
+const codecPreferences = document.querySelector('#codecPreferences');
+const supportsSetCodecPreferences = window.RTCRtpTransceiver &&
+  'setCodecPreferences' in window.RTCRtpTransceiver.prototype;
+
+if (supportsSetCodecPreferences) {
+  const {codecs} = RTCRtpSender.getCapabilities('video');
+  codecs.forEach(codec => {
+    if (['video/red', 'video/ulpfec', 'video/rtx'].includes(codec.mimeType)) {
+      return;
+    }
+    const option = document.createElement('option');
+    option.value = (codec.mimeType + ' ' + (codec.sdpFmtpLine || '')).trim();
+    option.innerText = option.value;
+    codecPreferences.appendChild(option);
+  });
+  codecPreferences.disabled = false;
+}
+
+
+window.setCodec = () => {
+	if (supportsSetCodecPreferences) {
+	  const preferredCodec = codecPreferences.options[codecPreferences.selectedIndex];
+	  if (preferredCodec.value !== '') {
+		const [mimeType, sdpFmtpLine] = preferredCodec.value.split(' ');
+		const {codecs} = RTCRtpSender.getCapabilities('video');
+		const selectedCodecIndex = codecs.findIndex(c => c.mimeType === mimeType && c.sdpFmtpLine === sdpFmtpLine);
+		const selectedCodec = codecs[selectedCodecIndex];
+		codecs.splice(selectedCodecIndex, 1);
+		codecs.unshift(selectedCodec);
+		console.log(codecs);
+		const transceiver = webRtcPeer.getPeerConnection().getTransceivers().find(t => t.sender && t.sender.track === localStream.getVideoTracks()[0]);
+		transceiver.setCodecPreferences(codecs);
+		console.log('Preferred video codec', selectedCodec);
+		console.log('Transceiver', transceiver);
+	  }
+	}
+	codecPreferences.disabled = true;
+	// Display the video codec that is actually used.
+	setTimeout(async () => {
+	  const stats = await webRtcPeer.getPeerConnection().getStats();
+	  stats.forEach(stat => {
+		if (!(stat.type === 'outbound-rtp' && stat.kind === 'video')) {
+		  return;
+		}
+		const codec = stats.get(stat.codecId);
+		console.log('codec: ', codec);
+		document.getElementById('actualCodec').innerText = 'Using ' + codec.mimeType +
+		  ' ' + (codec.sdpFmtpLine ? codec.sdpFmtpLine + ' ' : '') +
+		  ', payloadType=' + codec.payloadType + '.';
+	  });
+	}, 1000);
+}
+
+
 function start() {
 	console.log('Starting video call ...')
 
 	// Disable start button
 	setState(I_AM_STARTING);
-	showSpinner(videoInput, videoOutput);
 
 	console.log('Creating WebRtcPeer and generating local sdp offer ...');
 
@@ -100,6 +153,10 @@ function onIceCandidate(candidate) {
 		candidate: candidate
 	};
 	sendMessage(message);
+}
+
+function switchPlatform() {
+	sendMessage("switch")
 }
 
 function onOffer(error, offerSdp) {
@@ -143,6 +200,7 @@ function setState(nextState) {
 		case I_CAN_START:
 			$('#start').attr('disabled', false);
 			$('#start').attr('onclick', 'start()');
+			$('#switch').attr('onclick', 'switchPlatform()');
 			$('#stop').attr('disabled', true);
 			$('#stop').removeAttr('onclick');
 			break;
